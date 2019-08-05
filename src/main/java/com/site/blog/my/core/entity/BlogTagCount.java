@@ -1,10 +1,17 @@
 package com.site.blog.my.core.entity;
 
 public class BlogTagCount {
+    /**
+     * 标签表主键id
+     */
     private Integer tagId;
-
+    /**
+     * 标签名称
+     */
     private String tagName;
-
+    /**
+     * 标签数
+     */
     private Integer tagCount;
 
 

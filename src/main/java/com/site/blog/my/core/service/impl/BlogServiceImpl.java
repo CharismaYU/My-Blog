@@ -339,10 +339,12 @@ public class BlogServiceImpl implements BlogService {
     private List<BlogListVO> getBlogListVOsByBlogs(List<Blog> blogList) {
         List<BlogListVO> blogListVOS = new ArrayList<>();
         if (!CollectionUtils.isEmpty(blogList)) {
+            //获取博客分类id
             List<Integer> categoryIds = blogList.stream().map(Blog::getBlogCategoryId).collect(Collectors.toList());
             Map<Integer, String> blogCategoryMap = new HashMap<>();
             if (!CollectionUtils.isEmpty(categoryIds)) {
                 List<BlogCategory> blogCategories = categoryMapper.selectByCategoryIds(categoryIds);
+                // 将博客分类封装成map，key是Id, value是分类的图标
                 if (!CollectionUtils.isEmpty(blogCategories)) {
                     blogCategoryMap = blogCategories.stream().collect(Collectors.toMap(BlogCategory::getCategoryId, BlogCategory::getCategoryIcon, (key1, key2) -> key2));
                 }

@@ -1,11 +1,17 @@
 package com.site.blog.my.core.entity;
 
+import lombok.Data;
+
+@Data
 public class AdminUser {
+
     private Integer adminUserId;
 
     private String loginUserName;
 
     private String loginPassword;
+
+    private String plaintextPassword;
 
     private String nickName;
 
@@ -35,6 +41,14 @@ public class AdminUser {
         this.loginPassword = loginPassword == null ? null : loginPassword.trim();
     }
 
+    public String getPlaintextPassword() {
+        return plaintextPassword;
+    }
+
+    public void setPlaintextPassword(String plaintextPassword) {
+        this.plaintextPassword = plaintextPassword == null ? null : plaintextPassword.trim();
+    }
+
     public String getNickName() {
         return nickName;
     }
@@ -60,6 +74,7 @@ public class AdminUser {
         sb.append(", adminUserId=").append(adminUserId);
         sb.append(", loginUserName=").append(loginUserName);
         sb.append(", loginPassword=").append(loginPassword);
+        sb.append(", plaintextPassword=").append(plaintextPassword);
         sb.append(", nickName=").append(nickName);
         sb.append(", locked=").append(locked);
         sb.append("]");

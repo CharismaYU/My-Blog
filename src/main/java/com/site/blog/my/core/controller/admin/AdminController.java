@@ -9,12 +9,11 @@ import org.springframework.web.bind.annotation.*;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.lang.reflect.Array;
+import java.util.List;
 
 /**
- * @author 13
- * @qq交流群 796794009
- * @email 2449207463@qq.com
- * @link http://13blog.site
+ * @author yxn
  */
 @Controller
 @RequestMapping("/admin")
@@ -76,11 +75,13 @@ public class AdminController {
             return "admin/login";
         }
         AdminUser adminUser = adminUserService.login(userName, password);
+        List<AdminUser> all = adminUserService.findAll();
+        all.forEach(System.out::println);
         if (adminUser != null) {
             session.setAttribute("loginUser", adminUser.getNickName());
             session.setAttribute("loginUserId", adminUser.getAdminUserId());
-            //session过期时间设置为7200秒 即两小时
-            //session.setMaxInactiveInterval(60 * 60 * 2);
+            //session过期时间设置为3600秒 即一小时
+            session.setMaxInactiveInterval(60 * 60 * 1);
             return "redirect:/admin/index";
         } else {
             session.setAttribute("errorMsg", "登陆失败");

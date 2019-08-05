@@ -2,6 +2,8 @@ package com.site.blog.my.core.service;
 
 import com.site.blog.my.core.entity.AdminUser;
 
+import java.util.List;
+
 public interface AdminUserService {
 
     AdminUser login(String userName, String password);
@@ -33,5 +35,7 @@ public interface AdminUserService {
      * @return
      */
     Boolean updateName(Integer loginUserId, String loginUserName, String nickName);
+
+    List<AdminUser> findAll();
 
 }
