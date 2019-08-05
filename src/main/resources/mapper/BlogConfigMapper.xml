@@ -4,25 +4,25 @@
   <resultMap id="BaseResultMap" type="com.site.blog.my.core.entity.BlogConfig">
     <id column="config_name" jdbcType="VARCHAR" property="configName" />
     <result column="config_value" jdbcType="VARCHAR" property="configValue" />
-    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
-    <result column="update_time" jdbcType="TIMESTAMP" property="updateTime" />
+    <result column="create_time" jdbcType="DATE" property="createTime" />
+    <result column="update_time" jdbcType="DATE" property="updateTime" />
   </resultMap>
   <sql id="Base_Column_List">
     config_name, config_value, create_time, update_time
   </sql>
-  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <!--<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
-    from tb_config
+    from blog_config
     where config_name = #{configName,jdbcType=VARCHAR}
-  </select>
-  <select id="selectAll" resultMap="BaseResultMap">
+  </select>-->
+  <!--<select id="selectAll" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
-    from tb_config
-  </select>
+    from blog_config
+  </select>-->
   <update id="updateByPrimaryKeySelective" parameterType="com.site.blog.my.core.entity.BlogConfig">
-    update tb_config
+    update blog_config
     <set>
       <if test="configValue != null">
         config_value = #{configValue,jdbcType=VARCHAR},

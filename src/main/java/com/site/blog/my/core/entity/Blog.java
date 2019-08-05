@@ -1,10 +1,6 @@
 package com.site.blog.my.core.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
-
-import java.util.Date;
-
-public class Blog {
+public class Blog extends AbstractAuditable {
     /**
      * 博客表主键id
      */
@@ -49,15 +45,6 @@ public class Blog {
      * 是否删除 0=否 1=是
      */
     private Byte isDeleted;
-    /**
-     * 添加时间
-     */
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date createTime;
-    /**
-     * 修改时间
-     */
-    private Date updateTime;
     /**
      * 博客内容
      */
@@ -151,22 +138,6 @@ public class Blog {
         this.isDeleted = isDeleted;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    public Date getUpdateTime() {
-        return updateTime;
-    }
-
-    public void setUpdateTime(Date updateTime) {
-        this.updateTime = updateTime;
-    }
-
     public String getBlogContent() {
         return blogContent;
     }
@@ -175,27 +146,4 @@ public class Blog {
         this.blogContent = blogContent == null ? null : blogContent.trim();
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", blogId=").append(blogId);
-        sb.append(", blogTitle=").append(blogTitle);
-        sb.append(", blogSubUrl=").append(blogSubUrl);
-        sb.append(", blogCoverImage=").append(blogCoverImage);
-        sb.append(", blogCategoryId=").append(blogCategoryId);
-        sb.append(", blogCategoryName=").append(blogCategoryName);
-        sb.append(", blogTags=").append(blogTags);
-        sb.append(", blogStatus=").append(blogStatus);
-        sb.append(", blogViews=").append(blogViews);
-        sb.append(", enableComment=").append(enableComment);
-        sb.append(", isDeleted=").append(isDeleted);
-        sb.append(", createTime=").append(createTime);
-        sb.append(", updateTime=").append(updateTime);
-        sb.append(", blogContent=").append(blogContent);
-        sb.append("]");
-        return sb.toString();
-    }
 }

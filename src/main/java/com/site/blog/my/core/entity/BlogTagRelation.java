@@ -1,7 +1,5 @@
 package com.site.blog.my.core.entity;
 
-import java.util.Date;
-
 public class BlogTagRelation {
     /**
      * 关系表id
@@ -15,10 +13,7 @@ public class BlogTagRelation {
      * 标签id
      */
     private Integer tagId;
-    /**
-     * 添加时间
-     */
-    private Date createTime;
+
 
     public Long getRelationId() {
         return relationId;
@@ -44,25 +39,4 @@ public class BlogTagRelation {
         this.tagId = tagId;
     }
 
-    public Date getCreateTime() {
-        return createTime;
-    }
-
-    public void setCreateTime(Date createTime) {
-        this.createTime = createTime;
-    }
-
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getSimpleName());
-        sb.append(" [");
-        sb.append("Hash = ").append(hashCode());
-        sb.append(", relationId=").append(relationId);
-        sb.append(", blogId=").append(blogId);
-        sb.append(", tagId=").append(tagId);
-        sb.append(", createTime=").append(createTime);
-        sb.append("]");
-        return sb.toString();
-    }
 }

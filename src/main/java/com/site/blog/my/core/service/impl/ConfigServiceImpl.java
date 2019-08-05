@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class ConfigServiceImpl implements ConfigService {
+public class ConfigServiceImpl extends BaseServiceImpl<BlogConfig> implements ConfigService {
     @Autowired
     private BlogConfigMapper configMapper;
 
@@ -34,7 +34,7 @@ public class ConfigServiceImpl implements ConfigService {
 
     @Override
     public int updateConfig(String configName, String configValue) {
-        BlogConfig blogConfig = configMapper.selectByPrimaryKey(configName);
+        BlogConfig blogConfig = selectByKey(configName);
         if (blogConfig != null) {
             blogConfig.setConfigValue(configValue);
             blogConfig.setUpdateTime(new Date());

@@ -1,6 +1,7 @@
 package com.site.blog.my.core.controller.common;
 
 import com.google.code.kaptcha.impl.DefaultKaptcha;
+import com.site.blog.my.core.config.Constants;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import com.google.code.kaptcha.util.Config;
@@ -20,6 +21,8 @@ public class KaptchaConfig {
         properties.put("kaptcha.textproducer.font.size", "30");
         properties.put("kaptcha.session.key", "verifyCode");
         properties.put("kaptcha.textproducer.char.space", "5");
+        properties.put("kaptcha.textproducer.char.string", Constants.KAPTCHA_TEXT);
+
         Config config = new Config(properties);
         defaultKaptcha.setConfig(config);
 

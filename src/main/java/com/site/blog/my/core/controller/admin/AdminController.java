@@ -75,8 +75,6 @@ public class AdminController {
             return "admin/login";
         }
         AdminUser adminUser = adminUserService.login(userName, password);
-        List<AdminUser> all = adminUserService.findAll();
-        all.forEach(System.out::println);
         if (adminUser != null) {
             session.setAttribute("loginUser", adminUser.getNickName());
             session.setAttribute("loginUserId", adminUser.getAdminUserId());
