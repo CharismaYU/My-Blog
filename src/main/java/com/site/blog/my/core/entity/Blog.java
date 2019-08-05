@@ -55,7 +55,7 @@ public class Blog {
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date createTime;
     /**
-     * 是修改时间
+     * 修改时间
      */
     private Date updateTime;
     /**
