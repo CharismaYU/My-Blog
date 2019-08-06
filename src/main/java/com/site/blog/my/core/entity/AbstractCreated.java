@@ -10,7 +10,7 @@ import java.util.Date;
  * @Date: 2019/8/5 19:21
  * @Description:
  */
-public abstract class AbstractCreated<PK extends Serializable> {
+public abstract class AbstractCreated {
 
     /**
      * 创建时间

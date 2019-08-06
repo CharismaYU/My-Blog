@@ -9,7 +9,7 @@ import java.util.Date;
  * @Date: 2019/8/5 19:51
  * @Description:
  */
-public abstract class AbstractAuditable extends AbstractCreated<Long> {
+public abstract class AbstractAuditable extends AbstractCreated {
 
     /**
      * 修改时间

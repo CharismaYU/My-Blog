@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import java.util.Enumeration;
 
 /**
  * @author 13
@@ -35,7 +36,8 @@ public class ConfigurationController {
     public Result website(@RequestParam(value = "websiteName", required = false) String websiteName,
                           @RequestParam(value = "websiteDescription", required = false) String websiteDescription,
                           @RequestParam(value = "websiteLogo", required = false) String websiteLogo,
-                          @RequestParam(value = "websiteIcon", required = false) String websiteIcon) {
+                          @RequestParam(value = "websiteIcon", required = false) String websiteIcon, HttpServletRequest request) {
+        request.getAttributeNames()
         int updateResult = 0;
         if (!StringUtils.isEmpty(websiteName)) {
             updateResult += configService.updateConfig("websiteName", websiteName);

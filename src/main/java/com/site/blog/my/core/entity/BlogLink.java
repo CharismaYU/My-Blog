@@ -1,6 +1,6 @@
 package com.site.blog.my.core.entity;
 
-public class BlogLink extends AbstractCreated<Long> {
+public class BlogLink extends AbstractCreated {
     /**
      * 友链表主键id
      */

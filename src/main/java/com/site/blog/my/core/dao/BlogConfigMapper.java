@@ -13,6 +13,6 @@ public interface BlogConfigMapper extends MyMapper<BlogConfig> {
 
     int updateByPrimaryKeySelective(BlogConfig record);
 
-    /*@Select("select config_name, config_value, create_time, update_time from blog_config where config_name =  #{configName,jdbcType=VARCHAR} ")
-    BlogConfig selectByPrimaryKey(String configName);*/
+    @Select("select config_name, config_value, create_time, update_time from blog_config where config_name =  #{configName,jdbcType=VARCHAR} ")
+    BlogConfig findByConfigName(String configName);
 }

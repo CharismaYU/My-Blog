@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.util.Date;
 
-public class BlogCategory extends AbstractCreated<Long> {
+public class BlogCategory extends AbstractCreated {
     /**
      * 分类表主键
      */

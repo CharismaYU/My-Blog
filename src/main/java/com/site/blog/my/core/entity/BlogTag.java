@@ -1,6 +1,6 @@
 package com.site.blog.my.core.entity;
 
-public class BlogTag extends AbstractCreated<Long> {
+public class BlogTag extends AbstractCreated {
     /**
      * 标签表主键id
      */

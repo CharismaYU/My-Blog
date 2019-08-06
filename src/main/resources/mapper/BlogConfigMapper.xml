@@ -2,10 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.site.blog.my.core.dao.BlogConfigMapper">
   <resultMap id="BaseResultMap" type="com.site.blog.my.core.entity.BlogConfig">
-    <id column="config_name" jdbcType="VARCHAR" property="configName" />
-    <result column="config_value" jdbcType="VARCHAR" property="configValue" />
-    <result column="create_time" jdbcType="DATE" property="createTime" />
-    <result column="update_time" jdbcType="DATE" property="updateTime" />
+    <id column="config_name" javaType="String" property="configName" jdbcType="VARCHAR" />
+    <result column="config_value" javaType="String" property="configValue" jdbcType="VARCHAR" />
+    <result column="create_time" javaType="java.util.Date"  property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" javaType="java.util.Date" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
   <sql id="Base_Column_List">
     config_name, config_value, create_time, update_time
