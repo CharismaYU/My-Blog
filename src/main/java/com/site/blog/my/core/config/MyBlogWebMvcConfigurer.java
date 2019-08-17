@@ -5,12 +5,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.servlet.MultipartConfigFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.ResourceBundleMessageSource;
+import org.springframework.util.StringUtils;
 import org.springframework.util.unit.DataSize;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.servlet.MultipartConfigElement;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.Enumeration;
+import java.util.Locale;
 
 @Configuration
 public class MyBlogWebMvcConfigurer implements WebMvcConfigurer {
@@ -48,6 +55,41 @@ public class MyBlogWebMvcConfigurer implements WebMvcConfigurer {
         /// 设置总上传数据总大小
         factory.setMaxRequestSize(DataSize.ofMegabytes(40));
         return factory.createMultipartConfig();
+    }
+
+    @Bean
+    public ResourceBundleMessageSource messageSource() {
+        Locale.setDefault(Locale.SIMPLIFIED_CHINESE);
+        ResourceBundleMessageSource source = new ResourceBundleMessageSource();
+        String [] baseNames = new String[] {"i18n/messages", "i18n/login/login"};
+        source.setBasenames(baseNames);// name of the resource bundle
+        source.setUseCodeAsDefaultMessage(true);
+        source.setDefaultEncoding("UTF-8");
+        return source;
+    }
+
+    @Bean
+    public LocaleResolver localeResolver() {
+        return new NativeLocaleResolver();
+    }
+
+    protected static class NativeLocaleResolver implements LocaleResolver {
+
+        @Override
+        public Locale resolveLocale(HttpServletRequest request) {
+            String language = request.getParameter("language");
+            Locale locale = Locale.getDefault();
+            if (!StringUtils.isEmpty(language)) {
+                String[] split = language.split("_");
+                locale = new Locale(split[0], split[1]);
+            }
+            return locale;
+        }
+
+        @Override
+        public void setLocale(HttpServletRequest request, HttpServletResponse response, Locale locale) {
+
+        }
     }
 
 }

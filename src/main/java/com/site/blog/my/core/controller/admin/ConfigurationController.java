@@ -37,7 +37,6 @@ public class ConfigurationController {
                           @RequestParam(value = "websiteDescription", required = false) String websiteDescription,
                           @RequestParam(value = "websiteLogo", required = false) String websiteLogo,
                           @RequestParam(value = "websiteIcon", required = false) String websiteIcon, HttpServletRequest request) {
-        request.getAttributeNames()
         int updateResult = 0;
         if (!StringUtils.isEmpty(websiteName)) {
             updateResult += configService.updateConfig("websiteName", websiteName);

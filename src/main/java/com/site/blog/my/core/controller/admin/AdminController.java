@@ -2,6 +2,7 @@ package com.site.blog.my.core.controller.admin;
 
 import com.site.blog.my.core.entity.AdminUser;
 import com.site.blog.my.core.service.*;
+import com.site.blog.my.core.util.MessageUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.lang.reflect.Array;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * @author yxn
@@ -34,7 +36,12 @@ public class AdminController {
 
 
     @GetMapping({"/login"})
-    public String login() {
+    public String login(HttpServletRequest request) {
+        String language = request.getParameter("language");
+        if (StringUtils.isEmpty(language)) {
+            language = Locale.SIMPLIFIED_CHINESE.getLanguage();
+        }
+        request.getSession().setAttribute("language", language);
         return "admin/login";
     }
 
@@ -61,17 +68,20 @@ public class AdminController {
                         @RequestParam("password") String password,
                         @RequestParam("verifyCode") String verifyCode,
                         HttpSession session) {
+        // 国际化
+        String language = session.getAttribute("language") + "";
+        Locale locale = MessageUtil.getLocale(language);
         if (StringUtils.isEmpty(verifyCode)) {
-            session.setAttribute("errorMsg", "验证码不能为空");
+            session.setAttribute("errorMsg", MessageUtil.getMessage(locale, "login.verifyCodeIsNull"));
             return "admin/login";
         }
         if (StringUtils.isEmpty(userName) || StringUtils.isEmpty(password)) {
-            session.setAttribute("errorMsg", "用户名或密码不能为空");
+            session.setAttribute("errorMsg", MessageUtil.getMessage(locale, "login.userOrPasswordIsNull"));
             return "admin/login";
         }
         String kaptchaCode = session.getAttribute("verifyCode") + "";
         if (StringUtils.isEmpty(kaptchaCode) || !verifyCode.equals(kaptchaCode)) {
-            session.setAttribute("errorMsg", "验证码错误");
+            session.setAttribute("errorMsg", MessageUtil.getMessage(locale, "login.verifyCodeError"));
             return "admin/login";
         }
         AdminUser adminUser = adminUserService.login(userName, password);
@@ -82,7 +92,7 @@ public class AdminController {
             session.setMaxInactiveInterval(60 * 60 * 1);
             return "redirect:/admin/index";
         } else {
-            session.setAttribute("errorMsg", "登陆失败");
+            session.setAttribute("errorMsg", MessageUtil.getMessage(locale, "login.loginError"));
             return "admin/login";
         }
     }
@@ -104,8 +114,9 @@ public class AdminController {
     @ResponseBody
     public String passwordUpdate(HttpServletRequest request, @RequestParam("originalPassword") String originalPassword,
                                  @RequestParam("newPassword") String newPassword) {
+        String language = request.getSession().getAttribute("language") + "";
         if (StringUtils.isEmpty(originalPassword) || StringUtils.isEmpty(newPassword)) {
-            return "参数不能为空";
+            return MessageUtil.getMessage(language, "parametersIsEmpty");
         }
         Integer loginUserId = (int) request.getSession().getAttribute("loginUserId");
         if (adminUserService.updatePassword(loginUserId, originalPassword, newPassword)) {
