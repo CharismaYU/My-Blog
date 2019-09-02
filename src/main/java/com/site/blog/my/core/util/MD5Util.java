@@ -10,6 +10,12 @@ import java.security.MessageDigest;
  */
 public class MD5Util {
 
+    /**
+     * 转换字节数组为16进制字串
+     *
+     * @param b 字节数组
+     * @return 16进制字串
+     */
     private static String byteArrayToHexString(byte b[]) {
         StringBuffer resultSb = new StringBuffer();
         for (int i = 0; i < b.length; i++)
@@ -27,22 +33,26 @@ public class MD5Util {
         return hexDigits[d1] + hexDigits[d2];
     }
 
-    public static String MD5Encode(String origin, String charsetname) {
+    public static String MD5Encode(String origin, String charsetName) {
         String resultString = null;
         try {
-            resultString = new String(origin);
+            resultString = origin;
             MessageDigest md = MessageDigest.getInstance("MD5");
-            if (charsetname == null || "".equals(charsetname))
-                resultString = byteArrayToHexString(md.digest(resultString
-                        .getBytes()));
+            if (charsetName == null || "".equals(charsetName))
+                resultString = byteArrayToHexString(md.digest(resultString.getBytes()));
             else
-                resultString = byteArrayToHexString(md.digest(resultString
-                        .getBytes(charsetname)));
+                resultString = byteArrayToHexString(md.digest(resultString.getBytes(charsetName)));
         } catch (Exception exception) {
         }
-        return resultString;
+        //return resultString;
+        return resultString.toUpperCase();
     }
 
     private static final String hexDigits[] = {"0", "1", "2", "3", "4", "5",
             "6", "7", "8", "9", "a", "b", "c", "d", "e", "f"};
+
+    public static void main(String[] args) {
+        String s = MD5Encode("123", "utf-8");
+        System.out.println(s);
+    }
 }

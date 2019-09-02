@@ -3,6 +3,7 @@ package com.site.blog.my.core.controller.admin;
 import com.site.blog.my.core.entity.AdminUser;
 import com.site.blog.my.core.service.*;
 import com.site.blog.my.core.util.MessageUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,8 @@ import java.util.Locale;
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Resource
+    //@Resource(name = "AdminUserService")
+    @Autowired
     private AdminUserService adminUserService;
     @Resource
     private BlogService blogService;
