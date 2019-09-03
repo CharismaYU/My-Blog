@@ -29,6 +29,7 @@
         <kaptcha.version>2.3.2</kaptcha.version>
         <guava.version>28.0-jre</guava.version>
         <commonmark.version>0.8.0</commonmark.version>
+        <commons-lang3.version>3.9</commons-lang3.version>
         <commonmark-ext-gfm-tables.version>0.8.0</commonmark-ext-gfm-tables.version>
     </properties>
 
@@ -87,7 +88,11 @@
             <artifactId>guava</artifactId>
             <version>${guava.version}</version>
         </dependency>
-
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons-lang3.version}</version>
+        </dependency>
         <!-- commonmark table -->
         <dependency>
             <groupId>com.atlassian.commonmark</groupId>

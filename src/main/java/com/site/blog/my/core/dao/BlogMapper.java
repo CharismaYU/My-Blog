@@ -2,16 +2,25 @@ package com.site.blog.my.core.dao;
 
 import com.site.blog.my.core.entity.Blog;
 import com.site.blog.my.core.util.PageQueryUtil;
-import org.apache.ibatis.annotations.Delete;
+import com.site.blog.my.core.util.StringUtil;
+import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+/**
+ * Component注解不添加也没事，只是不加service那边引入LearnMapper会有错误提示，但不影响
+ */
+@Component
+@Mapper
 public interface BlogMapper {
 
     @Update("update tb_blog set is_deleted = 1 where blog_id = #{blogId,jdbcType=BIGINT} and is_deleted = 0")
@@ -71,19 +80,25 @@ public interface BlogMapper {
             "    where blog_id = #{blogId,jdbcType=BIGINT}")
     int updateByPrimaryKey(Blog record);
 
+    @SelectProvider(type = BlogSqlProvider.class, method = "findBlogList")
     List<Blog> findBlogList(PageQueryUtil pageUtil);
 
+    @SelectProvider(type = BlogSqlProvider.class, method = "findBlogListByType")
     List<Blog> findBlogListByType(@Param("type") int type, @Param("limit") int limit);
 
+    @SelectProvider(type = BlogSqlProvider.class, method = "getTotalBlogs")
     int getTotalBlogs(PageQueryUtil pageUtil);
 
+    @DeleteProvider(type = BlogSqlProvider.class, method = "deleteBatch")
     int deleteBatch(Integer[] ids);
+
 
     List<Blog> getBlogsPageByTagId(PageQueryUtil pageUtil);
 
+    @Select("SELECT COUNT(*) FROM tb_blog WHERE  blog_id IN (SELECT blog_id FROM tb_blog_tag_relation WHERE tag_id = #{tagId}) AND blog_status =1 AND is_deleted=0")
     int getTotalBlogsByTagId(PageQueryUtil pageUtil);
 
-    @Select("select * from tb_blog where blog_sub_url = #{subUrl,jdbcType=VARCHAR} and is_deleted = 0 limit 1")
+    @Select("SELECT * FROM tb_blog WHERE blog_sub_url = #{subUrl,jdbcType=VARCHAR} and is_deleted = 0 limit 1")
     Blog selectBySubUrl(String subUrl);
 
     int updateBlogCategorys(@Param("categoryName") String categoryName, @Param("categoryId") Integer categoryId, @Param("ids") Integer[] ids);
@@ -201,6 +216,81 @@ public interface BlogMapper {
             }
             sql.append("WHERE blog_id = #{blogId,jdbcType=BIGINT}");
             System.out.println("sql语句===" + sql.toString());
+            return sql.toString();
+        }
+
+        public String findBlogList(final PageQueryUtil params) {
+            StringBuffer sql = new StringBuffer();
+            sql.append("select * from TB_BLOG where 1=1 and IS_DELETED=0");
+            if (!StringUtil.isNull((String) params.get("keyword"))) {
+                sql.append(" and (blog_title like '%").append((String) params.get("author")).append("%' ");
+                sql.append(" or blog_category_name like '%").append((String) params.get("author")).append("%' )");
+            }
+            if (params.get("blogStatus") != null) {
+                sql.append(" and blog_status = '").append(params.get("blogStatus")).append("'");
+            }
+            if (params.get("blogCategoryId") != null) {
+                sql.append(" and blog_category_id = '").append(params.get("blogCategoryId")).append("'");
+            }
+            sql.append(" order by blog_id desc");
+            if (params.get("start") != null && params.get("limit") != null) {
+                sql.append(" limit ").append(params.get("start")).append(",").append(params.get("limit"));
+            }
+            System.out.println("查询sql==" + sql.toString());
+            return sql.toString();
+        }
+
+        public String findBlogListByType(final int type, final int limit) {
+            StringBuffer sql = new StringBuffer();
+            sql.append("select * from TB_BLOG where 1=1 and IS_DELETED=0 AND blog_status = 1 ");
+            if (type == 0) {
+                sql.append(" order by blog_views desc ");
+            } else if (type == 1) {
+                sql.append(" order by blog_id desc");
+            }
+            sql.append(" limit ").append(limit);
+            System.out.println("查询sql==" + sql.toString());
+            return sql.toString();
+        }
+
+        public String getTotalBlogs(final PageQueryUtil params) {
+            StringBuffer sql = new StringBuffer();
+            sql.append("select count(*) from tb_blog where IS_DELETED=0");
+            if (!StringUtil.isNull((String) params.get("keyword"))) {
+                sql.append(" and (blog_title like '%").append((String) params.get("author")).append("%' ");
+                sql.append(" or blog_category_name like '%").append((String) params.get("author")).append("%' )");
+            }
+            if (params.get("blogStatus") != null) {
+                sql.append(" and blog_status = '").append(params.get("blogStatus")).append("'");
+            }
+            if (params.get("blogCategoryId") != null) {
+                sql.append(" and blog_category_id = '").append(params.get("blogCategoryId")).append("'");
+            }
+            System.out.println("查询sql==" + sql.toString());
+            return sql.toString();
+        }
+
+        //删除的方法
+        public String deleteBatch(@Param("ids") final String[] ids) {
+            StringBuffer sql = new StringBuffer();
+            sql.append("DELETE TB_BLOG WHERE blog_id IN( ");
+            for (int i = 0; i < ids.length; i++) {
+                if (i == ids.length - 1) {
+                    sql.append(ids[i]);
+                } else {
+                    sql.append(ids[i]).append(",");
+                }
+            }
+            sql.append(" )");
+            return sql.toString();
+        }
+
+        public String getBlogsPageByTagId(PageQueryUtil pageUtil) {
+            StringBuffer sql = new StringBuffer();
+            sql.append("Select * ");
+            sql.append(" FROM tb_blog WHERE blog_id IN (SELECT blog_id FROM tb_blog_tag_relation WHERE tag_id = #{tagId}) AND blog_status =1 AND is_deleted=0 order by blog_id desc ");
+            if (pageUtil.get("start") != null && pageUtil.getLimit() > 0)
+                sql.append("limit #{start},#{limit}");
             return sql.toString();
         }
     }

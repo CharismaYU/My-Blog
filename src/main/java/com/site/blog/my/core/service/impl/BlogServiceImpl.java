@@ -1,5 +1,6 @@
 package com.site.blog.my.core.service.impl;
 
+import com.google.common.collect.Maps;
 import com.site.blog.my.core.controller.vo.BlogDetailVO;
 import com.site.blog.my.core.controller.vo.BlogListVO;
 import com.site.blog.my.core.controller.vo.SimpleBlogListVO;
@@ -327,7 +328,7 @@ public class BlogServiceImpl implements BlogService {
                 blogDetailVO.setBlogTags(tags);
             }
             //设置评论数
-            Map params = new HashMap();
+            Map<String, Object> params = Maps.newHashMap();
             params.put("blogId", blog.getBlogId());
             params.put("commentStatus", 1);//过滤审核通过的数据
             blogDetailVO.setCommentCount(blogCommentMapper.getTotalBlogComments(params));

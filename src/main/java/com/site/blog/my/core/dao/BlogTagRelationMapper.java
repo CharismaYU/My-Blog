@@ -1,10 +1,14 @@
 package com.site.blog.my.core.dao;
 
 import com.site.blog.my.core.entity.BlogTagRelation;
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+@Component
+@Mapper
 public interface BlogTagRelationMapper {
     int deleteByPrimaryKey(Long relationId);
 
