@@ -3,6 +3,7 @@ package com.site.blog.my.core.dao;
 import com.site.blog.my.core.entity.Blog;
 import com.site.blog.my.core.util.PageQueryUtil;
 import com.site.blog.my.core.util.StringUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
@@ -274,14 +275,7 @@ public interface BlogMapper {
         public String deleteBatch(@Param("ids") final String[] ids) {
             StringBuffer sql = new StringBuffer();
             sql.append("DELETE TB_BLOG WHERE blog_id IN( ");
-            for (int i = 0; i < ids.length; i++) {
-                if (i == ids.length - 1) {
-                    sql.append(ids[i]);
-                } else {
-                    sql.append(ids[i]).append(",");
-                }
-            }
-            sql.append(" )");
+            sql.append(StringUtils.join(ids, ",")).append(") ");
             return sql.toString();
         }
 

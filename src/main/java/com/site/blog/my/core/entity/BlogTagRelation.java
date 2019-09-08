@@ -1,6 +1,6 @@
 package com.site.blog.my.core.entity;
 
-public class BlogTagRelation {
+public class BlogTagRelation extends AbstractCreated {
     /**
      * 关系表id
      */
