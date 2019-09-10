@@ -181,7 +181,7 @@ public interface BlogCommentMapper {
                 sql.append(" AND comment_status = #{commentStatus}");
             }
             sql.append(" ORDER BY comment_id desc");
-            if (pageUtil.get("start") != null && pageUtil.get("limit") != null)
+            if (pageUtil != null && pageUtil.get("start") != null && pageUtil.get("limit") != null)
                 sql.append(" limit #{start},#{limit}");
             System.out.println("查询sql==" + sql.toString());
             return sql.toString();
@@ -190,12 +190,15 @@ public interface BlogCommentMapper {
         public String getTotalBlogComments(final Map<String, Object> pageUtil) {
             StringBuffer sql = new StringBuffer();
             sql.append("SELECT count(*) FROM tb_blog_comment WHERE is_deleted=0");
-            if (pageUtil.get("blogId") != null) {
-                sql.append(" AND blog_id = #{blogId}");
+            if (pageUtil != null) {
+                if (pageUtil.get("blogId") != null) {
+                    sql.append(" AND blog_id = #{blogId}");
+                }
+                if (pageUtil.get("commentStatus") != null) {
+                    sql.append(" AND comment_status = #{commentStatus}");
+                }
             }
-            if (pageUtil.get("commentStatus") != null) {
-                sql.append(" AND comment_status = #{commentStatus}");
-            }
+
             System.out.println("查询sql==" + sql.toString());
             return sql.toString();
         }

@@ -285,7 +285,7 @@ public interface BlogMapper {
             StringBuffer sql = new StringBuffer();
             sql.append("Select * ");
             sql.append(" FROM tb_blog WHERE blog_id IN (SELECT blog_id FROM tb_blog_tag_relation WHERE tag_id = #{tagId}) AND blog_status =1 AND is_deleted=0 order by blog_id desc ");
-            if (pageUtil.get("start") != null && pageUtil.getLimit() > 0)
+            if (pageUtil != null && pageUtil.get("start") != null && pageUtil.getLimit() > 0)
                 sql.append("limit #{start},#{limit}");
             return sql.toString();
         }

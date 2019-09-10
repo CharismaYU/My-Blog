@@ -110,7 +110,7 @@ public interface BlogTagMapper {
             StringBuffer sql = new StringBuffer();
             sql.append("select * from tb_blog_tag where IS_DELETED=0");
             sql.append(" order by tag_id desc");
-            if (pageUtil.get("start") != null && pageUtil.getLimit() > 0)
+            if (pageUtil != null && pageUtil.get("start") != null && pageUtil.getLimit() > 0)
                 sql.append(" limit #{start},#{limit}");
             System.out.println("查询sql==" + sql.toString());
             return sql.toString();
