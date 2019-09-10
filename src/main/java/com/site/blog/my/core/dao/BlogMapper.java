@@ -257,15 +257,17 @@ public interface BlogMapper {
         public String getTotalBlogs(final PageQueryUtil params) {
             StringBuffer sql = new StringBuffer();
             sql.append("select count(*) from tb_blog where IS_DELETED=0");
-            if (!StringUtil.isNull((String) params.get("keyword"))) {
-                sql.append(" and (blog_title like '%").append((String) params.get("author")).append("%' ");
-                sql.append(" or blog_category_name like '%").append((String) params.get("author")).append("%' )");
-            }
-            if (params.get("blogStatus") != null) {
-                sql.append(" and blog_status = '").append(params.get("blogStatus")).append("'");
-            }
-            if (params.get("blogCategoryId") != null) {
-                sql.append(" and blog_category_id = '").append(params.get("blogCategoryId")).append("'");
+            if (params != null) {
+                if (params.get("keyword") != null) {
+                    sql.append(" and (blog_title like '%").append((String) params.get("author")).append("%' ");
+                    sql.append(" or blog_category_name like '%").append((String) params.get("author")).append("%' )");
+                }
+                if (params.get("blogStatus") != null) {
+                    sql.append(" and blog_status = '").append(params.get("blogStatus")).append("'");
+                }
+                if (params.get("blogCategoryId") != null) {
+                    sql.append(" and blog_category_id = '").append(params.get("blogCategoryId")).append("'");
+                }
             }
             System.out.println("查询sql==" + sql.toString());
             return sql.toString();
