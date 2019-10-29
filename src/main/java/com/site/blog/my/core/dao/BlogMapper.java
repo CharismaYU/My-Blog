@@ -223,19 +223,23 @@ public interface BlogMapper {
         public String findBlogList(final PageQueryUtil params) {
             StringBuffer sql = new StringBuffer();
             sql.append("select * from TB_BLOG where 1=1 and IS_DELETED=0");
-            if (!StringUtil.isNull((String) params.get("keyword"))) {
-                sql.append(" and (blog_title like '%").append((String) params.get("author")).append("%' ");
-                sql.append(" or blog_category_name like '%").append((String) params.get("author")).append("%' )");
-            }
-            if (params.get("blogStatus") != null) {
-                sql.append(" and blog_status = '").append(params.get("blogStatus")).append("'");
-            }
-            if (params.get("blogCategoryId") != null) {
-                sql.append(" and blog_category_id = '").append(params.get("blogCategoryId")).append("'");
+            if (params != null) {
+                if (!StringUtil.isNull((String) params.get("keyword"))) {
+                    sql.append(" and (blog_title like '%").append((String) params.get("author")).append("%' ");
+                    sql.append(" or blog_category_name like '%").append((String) params.get("author")).append("%' )");
+                }
+                if (params.get("blogStatus") != null) {
+                    sql.append(" and blog_status = '").append(params.get("blogStatus")).append("'");
+                }
+                if (params.get("blogCategoryId") != null) {
+                    sql.append(" and blog_category_id = '").append(params.get("blogCategoryId")).append("'");
+                }
             }
             sql.append(" order by blog_id desc");
-            if (params.get("start") != null && params.get("limit") != null) {
-                sql.append(" limit ").append(params.get("start")).append(",").append(params.get("limit"));
+            if (params != null) {
+                if (params.get("start") != null && params.get("limit") != null) {
+                    sql.append(" limit ").append(params.get("start")).append(",").append(params.get("limit"));
+                }
             }
             System.out.println("查询sql==" + sql.toString());
             return sql.toString();

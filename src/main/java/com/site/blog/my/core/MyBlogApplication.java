@@ -1,11 +1,10 @@
 package com.site.blog.my.core;
 
 import com.site.blog.my.core.event.MyApplicationEvent;
-import com.site.blog.my.core.listen.MyApplicationListener;
-import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.config.DelegatingApplicationListener;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -17,7 +16,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  * 2、定义事件监听器，一般实现ApplicationListener接口
  * 3、启动的时候，需要把监听器加入到Spring容器中，即可以使用注解@Component
  * 4、发布事件，使用ApplicationContext.publishEvent发布事件
- *
+ * <p>
  * 配置监听器
  * 1、SpringApplication.addListeners 添加监听器
  * 2、把监听器纳入到spring容器中管理，即可以使用注解@Component
@@ -26,7 +25,7 @@ import org.springframework.context.ConfigurableApplicationContext;
  */
 //@MapperScan("com.site.blog.my.core.dao")
 @SpringBootApplication
-public class MyBlogApplication {
+public class MyBlogApplication extends SpringBootServletInitializer {
     public static void main(String[] args) {
         //SpringApplication.run(MyBlogApplication.class, args);
         SpringApplication app = new SpringApplication(MyBlogApplication.class);
@@ -36,5 +35,9 @@ public class MyBlogApplication {
         context.publishEvent(new MyApplicationEvent(new Object()));
         //context.stop();
         //context.close();
+    }
+
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(MyBlogApplication.class);
     }
 }

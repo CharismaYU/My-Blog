@@ -133,8 +133,10 @@ public interface BlogLinkMapper {
             StringBuffer sql = new StringBuffer();
             sql.append("SELECT * from tb_link WHERE 1=1 AND is_deleted=0");
             sql.append(" ORDER BY link_id DESC");
-            if (params.get("start") != null && params.get("limit") != null) {
-                sql.append(" limit ").append(params.get("start")).append(",").append(params.get("limit"));
+            if (params != null) {
+                if (params.get("start") != null && params.get("limit") != null) {
+                    sql.append(" limit ").append(params.get("start")).append(",").append(params.get("limit"));
+                }
             }
             System.out.println("查询sql==" + sql.toString());
             return sql.toString();
