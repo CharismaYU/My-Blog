@@ -23,7 +23,7 @@ public class ConfigServiceImpl implements ConfigService {
     public static final String websiteIcon = "/admin/dist/img/favicon.png";
 
     public static final String yourAvatar = "/admin/dist/img/13.png";
-    public static final String yourEmail = "2449207463@qq.com";
+    public static final String yourEmail = "943039836@qq.com";
     public static final String yourName = "十三";
 
     public static final String footerAbout = "your personal blog. have fun.";

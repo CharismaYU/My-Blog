@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.stereotype.Component;
 import tk.mybatis.mapper.util.StringUtil;
 
@@ -53,7 +54,9 @@ public interface AdminUserMapper {
             "    where admin_user_id = #{adminUserId,jdbcType=INTEGER}")
     int updateByPrimaryKey(AdminUser record);
 
-    class AdminUserSqlBuilder {
+    class AdminUserSqlBuilder extends SQL {
+        private static final String TABLE_NAME = "tb_admin_user";
+
         public String insertSelective(AdminUser user) {
             StringBuilder sql = new StringBuilder();
             StringBuilder sqlValues = new StringBuilder(" values (");
@@ -88,25 +91,25 @@ public interface AdminUserMapper {
         }
 
         public String updateByPrimaryKeySelective(AdminUser user) {
-            StringBuilder sql = new StringBuilder();
-            sql.append("update blog_config set ");
-            if (StringUtil.isNotEmpty(user.getLoginUserName())) {
-                sql.append(" login_user_name = #{loginUserName,jdbcType=VARCHAR}, ");
-            }
-            if (StringUtil.isNotEmpty(user.getLoginPassword())) {
-                sql.append(" login_password = #{loginPassword,jdbcType=VARCHAR}, ");
-            }
-            if (StringUtil.isNotEmpty(user.getPlaintextPassword())) {
-                sql.append(" login_plaintext_password = #{plaintextPassword,jdbcType=VARCHAR}, ");
-            }
-            if (StringUtil.isNotEmpty(user.getNickName())) {
-                sql.append(" nick_name = #{nickName,jdbcType=VARCHAR}, ");
-            }
-            if (user.getLocked() != null) {
-                sql.append(" locked = #{locked,jdbcType=TINYINT}");
-            }
-            sql.append("  where admin_user_id = #{adminUserId,jdbcType=INTEGER}");
-            return sql.toString();
+            return new SQL() {{
+                UPDATE(TABLE_NAME);
+                if (StringUtil.isNotEmpty(user.getLoginUserName())) {
+                    SET("login_user_name = #{loginUserName,jdbcType=VARCHAR}");
+                }
+                if (StringUtil.isNotEmpty(user.getLoginPassword())) {
+                    SET("login_password = #{loginPassword,jdbcType=VARCHAR}");
+                }
+                if (StringUtil.isNotEmpty(user.getPlaintextPassword())) {
+                    SET("login_plaintext_password = #{plaintextPassword,jdbcType=VARCHAR}");
+                }
+                if (StringUtil.isNotEmpty(user.getNickName())) {
+                    SET("nick_name = #{nickName,jdbcType=VARCHAR}");
+                }
+                if (user.getLocked() != null) {
+                    SET("locked = #{locked,jdbcType=TINYINT}");
+                }
+                WHERE("admin_user_id = #{adminUserId,jdbcType=INTEGER}");
+            }}.toString();
         }
     }
 

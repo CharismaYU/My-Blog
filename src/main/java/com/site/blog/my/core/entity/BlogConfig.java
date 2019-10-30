@@ -1,9 +1,12 @@
 package com.site.blog.my.core.entity;
 
+import javax.persistence.Id;
+
 public class BlogConfig extends AbstractAuditable {
     /**
      * 配置项的名称
      */
+    @Id
     private String configName;
     /**
      * 配置项的值

@@ -71,7 +71,6 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
     @Override
     public int updateNotNull(T entity) {
         //根据主键更新属性不为null的值
-        mapper.selectAll();
         return mapper.updateByPrimaryKeySelective(entity);
     }
 

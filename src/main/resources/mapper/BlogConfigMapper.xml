@@ -10,17 +10,17 @@
   <sql id="Base_Column_List">
     config_name, config_value, create_time, update_time
   </sql>
-  <!--<select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
     select 
     <include refid="Base_Column_List" />
     from blog_config
     where config_name = #{configName,jdbcType=VARCHAR}
-  </select>-->
-  <!--<select id="selectAll" resultMap="BaseResultMap">
+  </select>
+  <select id="selectAll" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List"/>
     from blog_config
-  </select>-->
+  </select>
   <update id="updateByPrimaryKeySelective" parameterType="com.site.blog.my.core.entity.BlogConfig">
     update blog_config
     <set>
