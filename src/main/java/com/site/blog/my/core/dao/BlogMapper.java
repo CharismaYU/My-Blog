@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -36,10 +37,11 @@ public interface BlogMapper {
             "      #{blogCoverImage,jdbcType=VARCHAR}, #{blogCategoryId,jdbcType=INTEGER}, #{blogCategoryName,jdbcType=VARCHAR}, " +
             "      #{blogTags,jdbcType=VARCHAR}, #{blogStatus,jdbcType=TINYINT}, #{blogViews,jdbcType=BIGINT}, " +
             "      #{enableComment,jdbcType=TINYINT}, #{isDeleted,jdbcType=TINYINT}, #{createTime,jdbcType=TIMESTAMP}, " +
-            "      #{updateTime,jdbcType=TIMESTAMP}, #{blogContent,jdbcType=LONGVARCHAR})")
+            "      #{updateTime,jdbcType=TIMESTAMP}, #{blogContent,jdbcType=VARCHAR})")
     int insert(Blog record);
 
     @InsertProvider(type = BlogSqlProvider.class, method = "insertSelective")
+    @Options(useGeneratedKeys = true, keyProperty = "blogId")
     int insertSelective(Blog record);
 
     @Select("select * from tb_blog  where blog_id = #{blogId,jdbcType=BIGINT} and is_deleted = 0")
@@ -61,7 +63,7 @@ public interface BlogMapper {
             "      is_deleted = #{isDeleted,jdbcType=TINYINT}," +
             "      create_time = #{createTime,jdbcType=TIMESTAMP}," +
             "      update_time = #{updateTime,jdbcType=TIMESTAMP}," +
-            "      blog_content = #{blogContent,jdbcType=LONGVARCHAR}" +
+            "      blog_content = #{blogContent,jdbcType=VARCHAR}" +
             "    where blog_id = #{blogId,jdbcType=BIGINT}")
     int updateByPrimaryKeyWithBLOBs(Blog record);
 
@@ -163,7 +165,7 @@ public interface BlogMapper {
             }
             if (blog.getBlogContent() != null) {
                 sql.append("blog_content )");
-                sqlValues.append("#{blogContent,jdbcType=LONGVARCHAR} )");
+                sqlValues.append("#{blogContent,jdbcType=VARCHAR} )");
             }
             sql.append(sqlValues);
             System.out.println("sql语句===" + sql.toString());
@@ -213,7 +215,7 @@ public interface BlogMapper {
                 sql.append("update_time = #{updateTime,jdbcType=TIMESTAMP},");
             }
             if (blog.getBlogContent() != null) {
-                sql.append("blog_content = #{blogContent,jdbcType=LONGVARCHAR} ");
+                sql.append("blog_content = #{blogContent,jdbcType=VARCHAR} ");
             }
             sql.append("WHERE blog_id = #{blogId,jdbcType=BIGINT}");
             System.out.println("sql语句===" + sql.toString());

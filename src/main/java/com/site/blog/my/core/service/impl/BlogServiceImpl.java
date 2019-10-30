@@ -59,7 +59,7 @@ public class BlogServiceImpl implements BlogService {
         //保存文章
         if (blogMapper.insertSelective(blog) > 0) {
             //新增的tag对象
-            List<BlogTag> tagListForInsert = new ArrayList<>();
+            List<BlogTag> tagList = new ArrayList<>();
             //所有的tag对象，用于建立关系数据
             List<BlogTag> allTagsList = new ArrayList<>();
             for (int i = 0; i < tags.length; i++) {
@@ -68,19 +68,19 @@ public class BlogServiceImpl implements BlogService {
                     //不存在就新增
                     BlogTag tempTag = new BlogTag();
                     tempTag.setTagName(tags[i]);
-                    tagListForInsert.add(tempTag);
+                    tagList.add(tempTag);
                 } else {
                     allTagsList.add(tag);
                 }
             }
             //新增标签数据并修改分类排序值
-            if (!CollectionUtils.isEmpty(tagListForInsert)) {
-                tagMapper.batchInsertBlogTag(tagListForInsert);
+            if (!CollectionUtils.isEmpty(tagList)) {
+                tagMapper.batchInsertBlogTag(tagList);
             }
             categoryMapper.updateByPrimaryKeySelective(blogCategory);
             List<BlogTagRelation> blogTagRelations = new ArrayList<>();
             //新增关系数据
-            allTagsList.addAll(tagListForInsert);
+            allTagsList.addAll(tagList);
             for (BlogTag tag : allTagsList) {
                 BlogTagRelation blogTagRelation = new BlogTagRelation();
                 blogTagRelation.setBlogId(blog.getBlogId());

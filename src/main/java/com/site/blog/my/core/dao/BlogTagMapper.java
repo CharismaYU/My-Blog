@@ -1,6 +1,5 @@
 package com.site.blog.my.core.dao;
 
-import com.google.common.collect.Lists;
 import com.site.blog.my.core.entity.BlogTag;
 import com.site.blog.my.core.entity.BlogTagCount;
 import com.site.blog.my.core.util.PageQueryUtil;
@@ -8,13 +7,17 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
+import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Mapper
@@ -60,8 +63,10 @@ public interface BlogTagMapper {
     @UpdateProvider(type = BlogTagSqlBuilder.class, method = "deleteBatch")
     int deleteBatch(Integer[] ids);
 
-    @UpdateProvider(type = BlogTagSqlBuilder.class, method = "batchInsertBlogTag")
-    int batchInsertBlogTag(List<BlogTag> tagList);
+    @InsertProvider(type = BlogTagSqlBuilder.class, method = "batchInsertBlogTag")
+    //加入该注解可以保持对象后，查看对象插入id
+    @Options(useGeneratedKeys = true, keyProperty = "tagId")
+    int batchInsertBlogTag(@Param("list") List<BlogTag> tagList);
 
     class BlogTagSqlBuilder {
         public String insertSelective(BlogTag blog) {
@@ -124,13 +129,21 @@ public interface BlogTagMapper {
             return sql.toString();
         }
 
-        public String batchInsertBlogTag(List<BlogTag> tagList) {
-            List<String> tagNames = Lists.newArrayList();
-            tagList.forEach(n -> tagNames.add(n.getTagName()));
+        public String batchInsertBlogTag(Map<String, Object> map) {
+            //由Mapper传入的List在SQL构造类中将会包装在一个Map里，所以这里的参数是Map
+            //key就是Mapper中@Param注解配置的名称
+            List<BlogTag> tagList = (List<BlogTag>) map.get("list");
             StringBuffer sql = new StringBuffer();
-            sql.append("INSERT into tb_blog_tag(tag_name)");
-            sql.append(" VALUES (");
-            sql.append(StringUtils.join(tagNames, ",")).append(") ");
+            sql.append("INSERT INTO tb_blog_tag(tag_name)");
+            sql.append(" VALUES ");
+            int length = tagList.size();
+            MessageFormat mf = new MessageFormat("(#'{'list[{0}].tagName})");
+            for (int i = 0; i < length; i++) {
+                sql.append(mf.format(new Object[]{i}));
+                if (i < length - 1) {
+                    sql.append(",");
+                }
+            }
             return sql.toString();
         }
     }

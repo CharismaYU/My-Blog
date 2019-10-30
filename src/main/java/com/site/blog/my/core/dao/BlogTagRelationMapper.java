@@ -1,12 +1,12 @@
 package com.site.blog.my.core.dao;
 
-import com.google.common.collect.Lists;
 import com.site.blog.my.core.entity.BlogTagRelation;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
@@ -14,7 +14,9 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.springframework.stereotype.Component;
 
+import java.text.MessageFormat;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Mapper
@@ -50,7 +52,10 @@ public interface BlogTagRelationMapper {
     int updateByPrimaryKey(BlogTagRelation record);
 
     @InsertProvider(type = BlogTagRelationSqlBuilder.class, method = "batchInsert")
-    int batchInsert(@Param("relationList") List<BlogTagRelation> blogTagRelationList);
+    //加入该注解可以保持对象后，查看对象插入id
+    // 批量的时候Param("list") 必须是list，不然id不返回
+    @Options(useGeneratedKeys = true, keyProperty = "relationId")
+    int batchInsert(@Param("list") List<BlogTagRelation> blogTagRelationList);
 
     @Delete("DELETE FROM tb_blog_tag_relation WHERE blog_id = #{blogId,jdbcType=BIGINT}")
     int deleteByBlogId(Long blogId);
@@ -105,13 +110,19 @@ public interface BlogTagRelationMapper {
             return sql.toString();
         }
 
-        public String batchInsert(List<BlogTagRelation> blogTagRelationList) {
+        public String batchInsert(Map<String, Object> map) {
+            List<BlogTagRelation> blogTagRelationList = (List<BlogTagRelation>) map.get("list");
             StringBuffer sql = new StringBuffer();
-            sql.append(" INSERT into tb_blog_tag_relation(blog_id,tag_id)");
-            sql.append(" VALUES ( ");
-            List<Long> blogIds = Lists.newArrayList();
-            blogTagRelationList.forEach(blogTagRelation -> blogIds.add(blogTagRelation.getBlogId()));
-            sql.append(StringUtils.join(blogIds, ",")).append(") ");
+            sql.append(" INSERT INTO tb_blog_tag_relation(blog_id, tag_id)");
+            sql.append(" VALUES ");
+            int length = blogTagRelationList.size();
+            MessageFormat mf = new MessageFormat("(#'{'list[{0}].blogId,jdbcType=BIGINT},#'{'list[{0}].tagId,jdbcType=INTEGER})");
+            for (int i = 0; i < length; i++) {
+                sql.append(mf.format(new Object[]{i}));
+                if (i < length - 1) {
+                    sql.append(",");
+                }
+            }
             return sql.toString();
         }
     }
