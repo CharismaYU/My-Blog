@@ -34,6 +34,8 @@ import java.util.List;
 @Service
 public interface BaseService<T> {
 
+    List<T> selectAll();
+
     T selectByKey(Object key);
 
     int save(T entity);

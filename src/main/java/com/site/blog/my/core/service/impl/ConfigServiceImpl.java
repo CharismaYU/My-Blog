@@ -13,7 +13,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class ConfigServiceImpl implements ConfigService {
+public class ConfigServiceImpl extends BaseServiceImpl<BlogConfig> implements ConfigService {
+
     @Autowired
     private BlogConfigMapper configMapper;
 
@@ -38,7 +39,7 @@ public class ConfigServiceImpl implements ConfigService {
         if (blogConfig != null) {
             blogConfig.setConfigValue(configValue);
             blogConfig.setUpdateTime(new Date());
-            return configMapper.updateByPrimaryKeySelective(blogConfig);
+            return updateNotNull(blogConfig);
         }
         return 0;
     }
@@ -46,7 +47,7 @@ public class ConfigServiceImpl implements ConfigService {
     @Override
     public Map<String, String> getAllConfigs() {
         //获取所有的map并封装为map
-        List<BlogConfig> blogConfigs = configMapper.selectAll();
+        List<BlogConfig> blogConfigs = selectAll();
         Map<String, String> configMap = blogConfigs.stream().collect(Collectors.toMap(BlogConfig::getConfigName, BlogConfig::getConfigValue));
         for (Map.Entry<String, String> config : configMap.entrySet()) {
             if ("websiteName".equals(config.getKey()) && StringUtils.isEmpty(config.getValue())) {

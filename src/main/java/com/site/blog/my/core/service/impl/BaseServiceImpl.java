@@ -45,6 +45,12 @@ public abstract class BaseServiceImpl<T> implements BaseService<T> {
     }
 
     @Override
+    public List<T> selectAll() {
+        //说明：查询所有记录
+        return mapper.selectAll();
+    }
+
+    @Override
     public T selectByKey(Object key) {
         //说明：根据主键字段进行查询，方法参数必须包含完整的主键属性，查询条件使用等号
         return mapper.selectByPrimaryKey(key);
