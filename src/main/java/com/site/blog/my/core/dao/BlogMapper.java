@@ -2,7 +2,6 @@ package com.site.blog.my.core.dao;
 
 import com.site.blog.my.core.entity.Blog;
 import com.site.blog.my.core.util.PageQueryUtil;
-import com.site.blog.my.core.util.StringUtil;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.DeleteProvider;
 import org.apache.ibatis.annotations.Insert;
@@ -14,6 +13,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -106,127 +106,118 @@ public interface BlogMapper {
 
     int updateBlogCategorys(@Param("categoryName") String categoryName, @Param("categoryId") Integer categoryId, @Param("ids") Integer[] ids);
 
-    class BlogSqlProvider {
+    class BlogSqlProvider extends SQL {
+
+        private static final String TABLE_NAME = "TB_BLOG";
+
         public String insertSelective(Blog blog) {
-            StringBuilder sql = new StringBuilder();
-            StringBuilder sqlValues = new StringBuilder("values (");
-            sql.append("insert into tb_blog (");
-            if (blog.getBlogId() != null) {
-                sql.append("blogId, ");
-                sqlValues.append("#{blogId,jdbcType=BIGINT},");
-            }
-            if (blog.getBlogTitle() != null) {
-                sql.append("blog_title, ");
-                sqlValues.append("#{blogTitle,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogSubUrl() != null) {
-                sql.append("blog_sub_url, ");
-                sqlValues.append("#{blogSubUrl,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogCoverImage() != null) {
-                sql.append("blog_cover_image, ");
-                sqlValues.append("#{blogCoverImage,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogCategoryId() != null) {
-                sql.append("blog_category_id, ");
-                sqlValues.append("#{blogCategoryId,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogCategoryName() != null) {
-                sql.append("blog_category_name, ");
-                sqlValues.append("#{blogCategoryName,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogTags() != null) {
-                sql.append("blog_tags, ");
-                sqlValues.append("#{blogTags,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogStatus() != null) {
-                sql.append("blog_status, ");
-                sqlValues.append("#{blogStatus,jdbcType=TINYINT},");
-            }
-            if (blog.getBlogViews() != null) {
-                sql.append("blog_views, ");
-                sqlValues.append("#{blogViews,jdbcType=BIGINT},");
-            }
-            if (blog.getEnableComment() != null) {
-                sql.append("enable_comment, ");
-                sqlValues.append("#{enableComment,jdbcType=TINYINT},");
-            }
-            if (blog.getIsDeleted() != null) {
-                sql.append("is_deleted, ");
-                sqlValues.append("#{isDeleted,jdbcType=TINYINT},");
-            }
-            if (blog.getCreateTime() != null) {
-                sql.append("create_time, ");
-                sqlValues.append("#{createTime,jdbcType=TIMESTAMP},");
-            }
-            if (blog.getUpdateTime() != null) {
-                sql.append("update_time, ");
-                sqlValues.append("#{updateTime,jdbcType=TIMESTAMP},");
-            }
-            if (blog.getBlogContent() != null) {
-                sql.append("blog_content )");
-                sqlValues.append("#{blogContent,jdbcType=VARCHAR} )");
-            }
-            sql.append(sqlValues);
-            System.out.println("sql语句===" + sql.toString());
-            return sql.toString();
+            String sql = new SQL() {{
+                INSERT_INTO(TABLE_NAME);
+                if (blog.getBlogId() != null) {
+                    VALUES("blog_id", "#{blogId,jdbcType=BIGINT}");
+                }
+                if (blog.getBlogTitle() != null) {
+                    VALUES("blog_title", "#{blogTitle,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogSubUrl() != null) {
+                    VALUES("blog_sub_url", "#{blogSubUrl,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogCoverImage() != null) {
+                    VALUES("blog_cover_image", "#{blogCoverImage,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogCategoryId() != null) {
+                    VALUES("blog_category_id", "#{blogCategoryId,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogCategoryName() != null) {
+                    VALUES("blog_category_name", "#{blogCategoryName,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogTags() != null) {
+                    VALUES("blog_tags", "#{blogTags,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogStatus() != null) {
+                    VALUES("blog_status", "#{blogStatus,jdbcType=TINYINT}");
+                }
+                if (blog.getBlogViews() != null) {
+                    VALUES("blog_views", "#{blogViews,jdbcType=BIGINT}");
+                }
+                if (blog.getEnableComment() != null) {
+                    VALUES("enable_comment", "#{enableComment,jdbcType=TINYINT}");
+                }
+                if (blog.getIsDeleted() != null) {
+                    VALUES("is_deleted", "#{isDeleted,jdbcType=TINYINT}");
+                }
+                if (blog.getCreateTime() != null) {
+                    VALUES("create_time", "#{createTime,jdbcType=TIMESTAMP}");
+                }
+                if (blog.getUpdateTime() != null) {
+                    VALUES("update_time", "#{updateTime,jdbcType=TIMESTAMP}");
+                }
+                if (blog.getBlogContent() != null) {
+                    VALUES("blog_content", "#{blogContent,jdbcType=VARCHAR}");
+                }
+
+            }}.toString();
+            System.out.println("sql语句===" + sql);
+            return sql;
         }
 
         public String updateByPrimaryKeySelective(Blog blog) {
-            StringBuilder sql = new StringBuilder();
-            sql.append("UPDATE TB_BLOG SET ");
-            if (blog.getBlogId() != null) {
-                sql.append("blogId = #{blogId,jdbcType=BIGINT},");
-            }
-            if (blog.getBlogTitle() != null) {
-                sql.append("blog_title = #{blogTitle,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogSubUrl() != null) {
-                sql.append("blog_sub_url = #{blogSubUrl,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogCoverImage() != null) {
-                sql.append("blog_cover_image = #{blogCoverImage,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogCategoryId() != null) {
-                sql.append("blog_category_id = #{blogCategoryId,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogCategoryName() != null) {
-                sql.append("blog_category_name = #{blogCategoryName,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogTags() != null) {
-                sql.append("blog_tags = #{blogTags,jdbcType=VARCHAR},");
-            }
-            if (blog.getBlogStatus() != null) {
-                sql.append("blog_status = #{blogStatus,jdbcType=TINYINT},");
-            }
-            if (blog.getBlogViews() != null) {
-                sql.append("blog_views = #{blogViews,jdbcType=BIGINT},");
-            }
-            if (blog.getEnableComment() != null) {
-                sql.append("enable_comment = #{enableComment,jdbcType=TINYINT},");
-            }
-            if (blog.getIsDeleted() != null) {
-                sql.append("is_deleted = #{isDeleted,jdbcType=TINYINT},");
-            }
-            if (blog.getCreateTime() != null) {
-                sql.append("create_time = #{createTime,jdbcType=TIMESTAMP},");
-            }
-            if (blog.getUpdateTime() != null) {
-                sql.append("update_time = #{updateTime,jdbcType=TIMESTAMP},");
-            }
-            if (blog.getBlogContent() != null) {
-                sql.append("blog_content = #{blogContent,jdbcType=VARCHAR} ");
-            }
-            sql.append("WHERE blog_id = #{blogId,jdbcType=BIGINT}");
-            System.out.println("sql语句===" + sql.toString());
-            return sql.toString();
+            String sql = new SQL() {{
+                UPDATE(TABLE_NAME);
+                if (blog.getBlogId() != null) {
+                    SET("blog_id = #{blogId,jdbcType=BIGINT}");
+                }
+                if (blog.getBlogTitle() != null) {
+                    SET("blog_title = #{blogTitle,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogSubUrl() != null) {
+                    SET("blog_sub_url = #{blogSubUrl,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogCoverImage() != null) {
+                    SET("blog_cover_image = #{blogCoverImage,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogCategoryId() != null) {
+                    SET("blog_category_id = #{blogCategoryId,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogCategoryName() != null) {
+                    SET("blog_category_name = #{blogCategoryName,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogTags() != null) {
+                    SET("blog_tags = #{blogTags,jdbcType=VARCHAR}");
+                }
+                if (blog.getBlogStatus() != null) {
+                    SET("blog_status = #{blogStatus,jdbcType=TINYINT}");
+                }
+                if (blog.getBlogViews() != null) {
+                    SET("blog_views = #{blogViews,jdbcType=BIGINT}");
+                }
+                if (blog.getEnableComment() != null) {
+                    SET("enable_comment = #{enableComment,jdbcType=TINYINT}");
+                }
+                if (blog.getIsDeleted() != null) {
+                    SET("is_deleted = #{isDeleted,jdbcType=TINYINT}");
+                }
+                if (blog.getCreateTime() != null) {
+                    SET("create_time = #{createTime,jdbcType=TIMESTAMP}");
+                }
+                if (blog.getUpdateTime() != null) {
+                    SET("update_time = #{updateTime,jdbcType=TIMESTAMP}");
+                }
+                if (blog.getBlogContent() != null) {
+                    SET("blog_content = #{blogContent,jdbcType=VARCHAR}");
+                }
+                WHERE("blog_id = #{blogId,jdbcType=BIGINT}");
+
+            }}.toString();
+            System.out.println("sql语句===" + sql);
+            return sql;
         }
 
         public String findBlogList(final PageQueryUtil params) {
             StringBuffer sql = new StringBuffer();
             sql.append("select * from TB_BLOG where 1=1 and IS_DELETED=0");
             if (params != null) {
-                if (!StringUtil.isNull((String) params.get("keyword"))) {
+                if (!StringUtils.isEmpty((String) params.get("keyword"))) {
                     sql.append(" and (blog_title like '%").append((String) params.get("author")).append("%' ");
                     sql.append(" or blog_category_name like '%").append((String) params.get("author")).append("%' )");
                 }

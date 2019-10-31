@@ -11,9 +11,10 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.stereotype.Component;
-import tk.mybatis.mapper.util.StringUtil;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -59,74 +60,69 @@ public interface BlogLinkMapper {
     @UpdateProvider(type = BlogLinkSqlBuilder.class, method = "deleteBatch")
     int deleteBatch(Integer[] ids);
 
-    class BlogLinkSqlBuilder {
+    class BlogLinkSqlBuilder extends SQL {
+        private static final String TABLE_NAME = "tb_link";
+
         public String insertSelective(BlogLink blogLink) {
-            StringBuilder sql = new StringBuilder();
-            StringBuilder sqlValues = new StringBuilder(" values (");
-            sql.append("INSERT INTO tb_link (");
-            if (blogLink.getLinkId() != null) {
-                sql.append("link_id, ");
-                sqlValues.append("#{linkId,jdbcType=INTEGER},");
-            }
-            if (blogLink.getLinkType() != null) {
-                sql.append("link_type, ");
-                sqlValues.append("#{linkType,jdbcType=TINYINT},");
-            }
-            if (blogLink.getLinkName() != null) {
-                sql.append("link_name, ");
-                sqlValues.append("#{linkName,jdbcType=VARCHAR},");
-            }
-            if (blogLink.getLinkUrl() != null) {
-                sql.append("link_url, ");
-                sqlValues.append("#{linkUrl,jdbcType=VARCHAR},");
-            }
-            if (blogLink.getLinkDescription() != null) {
-                sql.append("link_description, ");
-                sqlValues.append("#{linkDescription,jdbcType=VARCHAR},");
-            }
-            if (blogLink.getLinkRank() != null) {
-                sql.append("linkRank, ");
-                sqlValues.append("#{linkRank,jdbcType=INTEGER} , ");
-            }
-            if (blogLink.getIsDeleted() != null) {
-                sql.append("is_deleted, ");
-                sqlValues.append("#{isDeleted,jdbcType=TINYINT} , ");
-            }
-            if (blogLink.getCreateTime() != null) {
-                sql.append("create_time) ");
-                sqlValues.append("#{createTime,jdbcType=TIMESTAMP} )");
-            }
-            sql.append(sqlValues);
-            System.out.println("sql语句===" + sql.toString());
-            return sql.toString();
+            String sql = new SQL() {{
+                INSERT_INTO(TABLE_NAME);
+                if (blogLink.getLinkId() != null) {
+                    VALUES("link_id", "#{linkId,jdbcType=INTEGER}");
+                }
+                if (blogLink.getLinkType() != null) {
+                    VALUES("link_type", "#{linkType,jdbcType=TINYINT}");
+                }
+                if (StringUtils.isNotBlank(blogLink.getLinkName())) {
+                    VALUES("link_name", "#{linkName,jdbcType=VARCHAR}");
+                }
+                if (StringUtils.isNotBlank(blogLink.getLinkUrl())) {
+                    VALUES("link_url", "#{linkUrl,jdbcType=VARCHAR}");
+                }
+                if (StringUtils.isNotBlank(blogLink.getLinkDescription())) {
+                    VALUES("link_description", "#{linkDescription,jdbcType=VARCHAR}");
+                }
+                if (blogLink.getLinkRank() != null) {
+                    VALUES("link_rank", "#{linkRank,jdbcType=INTEGER}");
+                }
+                if (blogLink.getIsDeleted() != null) {
+                    VALUES("is_deleted", "#{isDeleted,jdbcType=TINYINT}");
+                }
+                if (blogLink.getCreateTime() == null) {
+                    blogLink.setCreateTime(new Date());
+                }
+                VALUES("create_time", "#{createTime,jdbcType=TIMESTAMP}");
+            }}.toString();
+            System.out.println("sql语句===" + sql);
+            return sql;
         }
 
         public String updateByPrimaryKeySelective(BlogLink blogLink) {
-            StringBuilder sql = new StringBuilder();
-            sql.append("UPDATE tb_link SET ");
-            if (blogLink.getLinkType() != null) {
-                sql.append(" link_type = #{linkType,jdbcType=TINYINT}, ");
-            }
-            if (StringUtil.isNotEmpty(blogLink.getLinkName())) {
-                sql.append(" link_name = #{linkName,jdbcType=VARCHAR}, ");
-            }
-            if (StringUtil.isNotEmpty(blogLink.getLinkUrl())) {
-                sql.append(" link_url = #{linkUrl,jdbcType=VARCHAR}, ");
-            }
-            if (StringUtil.isNotEmpty(blogLink.getLinkDescription())) {
-                sql.append(" link_description = #{linkDescription,jdbcType=VARCHAR}, ");
-            }
-            if (blogLink.getLinkRank() != null) {
-                sql.append(" link_rank = #{linkRank,jdbcType=INTEGER}, ");
-            }
-            if (blogLink.getIsDeleted() != null) {
-                sql.append(" is_deleted = #{isDeleted,jdbcType=TINYINT}, ");
-            }
-            if (blogLink.getCreateTime() != null) {
-                sql.append(" create_time = #{createTime,jdbcType=TIMESTAMP} ");
-            }
-            sql.append("  WHERE link_id = #{linkId,jdbcType=INTEGER}");
-            return sql.toString();
+            String sql = new SQL() {{
+                UPDATE(TABLE_NAME);
+                if (blogLink.getLinkType() != null) {
+                    SET(" link_type = #{linkType,jdbcType=TINYINT}");
+                }
+                if (StringUtils.isNotBlank(blogLink.getLinkName())) {
+                    SET(" link_name = #{linkName,jdbcType=VARCHAR}");
+                }
+                if (StringUtils.isNotBlank(blogLink.getLinkUrl())) {
+                    SET(" link_url = #{linkUrl,jdbcType=VARCHAR}");
+                }
+                if (StringUtils.isNotBlank(blogLink.getLinkDescription())) {
+                    SET(" link_description = #{linkDescription,jdbcType=VARCHAR}");
+                }
+                if (blogLink.getLinkRank() != null) {
+                    SET(" link_rank = #{linkRank,jdbcType=INTEGER}");
+                }
+                if (blogLink.getIsDeleted() != null) {
+                    SET(" is_deleted = #{isDeleted,jdbcType=TINYINT}");
+                }
+                if (blogLink.getCreateTime() != null) {
+                    SET(" create_time = #{createTime,jdbcType=TIMESTAMP}");
+                }
+                WHERE("link_id = #{linkId,jdbcType=INTEGER}");
+            }}.toString();
+            return sql;
         }
 
         public String findLinkList(final PageQueryUtil params) {
@@ -143,7 +139,7 @@ public interface BlogLinkMapper {
         }
 
         //删除的方法
-        public String deleteBatch(@Param("ids") final String[] ids) {
+        public String deleteBatch(@Param("ids") final Integer[] ids) {
             StringBuffer sql = new StringBuffer();
             sql.append("UPDATE tb_link SET is_deleted=1 WHERE link_id IN( ");
             sql.append(StringUtils.join(ids, ",")).append(") ");

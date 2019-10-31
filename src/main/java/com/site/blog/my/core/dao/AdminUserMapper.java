@@ -1,6 +1,7 @@
 package com.site.blog.my.core.dao;
 
 import com.site.blog.my.core.entity.AdminUser;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.InsertProvider;
 import org.apache.ibatis.annotations.Mapper;
@@ -10,7 +11,6 @@ import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
 import org.apache.ibatis.jdbc.SQL;
 import org.springframework.stereotype.Component;
-import tk.mybatis.mapper.util.StringUtil;
 
 import java.util.List;
 
@@ -58,51 +58,44 @@ public interface AdminUserMapper {
         private static final String TABLE_NAME = "tb_admin_user";
 
         public String insertSelective(AdminUser user) {
-            StringBuilder sql = new StringBuilder();
-            StringBuilder sqlValues = new StringBuilder(" values (");
-            sql.append("insert into tb_admin_user (");
-            if (user.getAdminUserId() != null) {
-                sql.append("admin_user_id, ");
-                sqlValues.append("#{adminUserId,jdbcType=INTEGER},");
-            }
-            if (user.getLoginUserName() != null) {
-                sql.append("login_user_name, ");
-                sqlValues.append("#{loginUserName,jdbcType=VARCHAR},");
-            }
-            if (user.getLoginPassword() != null) {
-                sql.append("login_password, ");
-                sqlValues.append("#{loginPassword,jdbcType=VARCHAR},");
-            }
-            if (user.getPlaintextPassword() != null) {
-                sql.append("login_plaintext_password, ");
-                sqlValues.append("#{plaintextPassword,jdbcType=VARCHAR},");
-            }
-            if (user.getNickName() != null) {
-                sql.append("nick_name, ");
-                sqlValues.append("#{nickName,jdbcType=VARCHAR},");
-            }
-            if (user.getLocked() != null) {
-                sql.append("locked) ");
-                sqlValues.append("#{locked,jdbcType=TINYINT} )");
-            }
-            sql.append(sqlValues);
-            System.out.println("sql语句===" + sql.toString());
-            return sql.toString();
+            String sql = new SQL() {{
+                INSERT_INTO(TABLE_NAME);
+                if (user.getAdminUserId() != null) {
+                    VALUES("admin_user_id", "#{adminUserId,jdbcType=INTEGER}");
+                }
+                if (StringUtils.isNotBlank(user.getLoginUserName())) {
+                    VALUES("login_user_name", "#{loginUserName,jdbcType=VARCHAR}");
+                }
+                if (StringUtils.isNotBlank(user.getLoginPassword())) {
+                    VALUES("login_password", "#{loginPassword,jdbcType=VARCHAR}");
+                }
+                if (StringUtils.isNotBlank(user.getPlaintextPassword())) {
+                    VALUES("login_plaintext_password", "#{plaintextPassword,jdbcType=VARCHAR}");
+                }
+                if (StringUtils.isNotBlank(user.getNickName())) {
+                    VALUES("nick_name", "#{nickName,jdbcType=VARCHAR}");
+                }
+                if (user.getLocked() != null) {
+                    VALUES("locked", "#{locked,jdbcType=TINYINT}");
+                }
+            }}.toString();
+            System.out.println("sql语句===" + sql);
+            return sql;
         }
 
         public String updateByPrimaryKeySelective(AdminUser user) {
             return new SQL() {{
                 UPDATE(TABLE_NAME);
-                if (StringUtil.isNotEmpty(user.getLoginUserName())) {
+                if (StringUtils.isNotBlank(user.getLoginUserName())) {
                     SET("login_user_name = #{loginUserName,jdbcType=VARCHAR}");
                 }
-                if (StringUtil.isNotEmpty(user.getLoginPassword())) {
+                if (StringUtils.isNotBlank(user.getLoginPassword())) {
                     SET("login_password = #{loginPassword,jdbcType=VARCHAR}");
                 }
-                if (StringUtil.isNotEmpty(user.getPlaintextPassword())) {
+                if (StringUtils.isNotBlank(user.getPlaintextPassword())) {
                     SET("login_plaintext_password = #{plaintextPassword,jdbcType=VARCHAR}");
                 }
-                if (StringUtil.isNotEmpty(user.getNickName())) {
+                if (StringUtils.isNotBlank(user.getNickName())) {
                     SET("nick_name = #{nickName,jdbcType=VARCHAR}");
                 }
                 if (user.getLocked() != null) {

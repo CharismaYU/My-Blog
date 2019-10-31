@@ -6,6 +6,10 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 import org.springframework.stereotype.Component;
 
+
+/**
+ * 使用myBatis的通用插件tk.mybatis
+ */
 @Component
 @Mapper
 public interface BlogConfigMapper extends MyMapper<BlogConfig> {

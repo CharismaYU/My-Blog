@@ -12,9 +12,11 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -60,30 +62,29 @@ public interface BlogTagRelationMapper {
     @Delete("DELETE FROM tb_blog_tag_relation WHERE blog_id = #{blogId,jdbcType=BIGINT}")
     int deleteByBlogId(Long blogId);
 
-    class BlogTagRelationSqlBuilder {
+    class BlogTagRelationSqlBuilder extends SQL {
+
+        private static final String TABLE_NAME = "tb_blog_tag_relation";
+
         public String insertSelective(BlogTagRelation tagRelation) {
-            StringBuilder sql = new StringBuilder();
-            StringBuilder sqlValues = new StringBuilder(" values (");
-            sql.append("INSERT INTO tb_blog_tag_relation (");
-            if (tagRelation.getRelationId() != null) {
-                sql.append("relation_id, ");
-                sqlValues.append("#{relationId,jdbcType=BIGINT},");
-            }
-            if (tagRelation.getBlogId() != null) {
-                sql.append("blog_id, ");
-                sqlValues.append("#{blogId,jdbcType=BIGINT},");
-            }
-            if (tagRelation.getTagId() != null) {
-                sql.append("tag_id, ");
-                sqlValues.append("#{tagId,jdbcType=INTEGER},");
-            }
-            if (tagRelation.getCreateTime() != null) {
-                sql.append("create_time) ");
-                sqlValues.append("#{createTime,jdbcType=TIMESTAMP} )");
-            }
-            sql.append(sqlValues);
-            System.out.println("sql语句===" + sql.toString());
-            return sql.toString();
+            String sql = new SQL() {{
+                INSERT_INTO(TABLE_NAME);
+                if (tagRelation.getRelationId() != null) {
+                    VALUES("relation_id", "#{relationId,jdbcType=BIGINT}");
+                }
+                if (tagRelation.getBlogId() != null) {
+                    VALUES("blog_id", "#{blogId,jdbcType=BIGINT}");
+                }
+                if (tagRelation.getTagId() != null) {
+                    VALUES("tag_id", "#{tagId,jdbcType=INTEGER}");
+                }
+                if (tagRelation.getCreateTime() == null) {
+                    tagRelation.setCreateTime(new Date());
+                }
+                VALUES("create_time", "#{createTime,jdbcType=TIMESTAMP}");
+            }}.toString();
+            System.out.println("sql语句===" + sql);
+            return sql;
         }
 
         public String updateByPrimaryKeySelective(BlogTagRelation tagRelation) {
@@ -94,9 +95,6 @@ public interface BlogTagRelationMapper {
             }
             if (tagRelation.getTagId() != null) {
                 sql.append(" tag_id = #{tagId,jdbcType=INTEGER}, ");
-            }
-            if (tagRelation.getCreateTime() != null) {
-                sql.append(" create_time = #{createTime,jdbcType=TIMESTAMP} ");
             }
             sql.append("  WHERE relation_id = #{relationId,jdbcType=BIGINT}");
             return sql.toString();

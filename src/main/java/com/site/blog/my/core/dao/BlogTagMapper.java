@@ -13,9 +13,11 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.stereotype.Component;
 
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -68,47 +70,44 @@ public interface BlogTagMapper {
     @Options(useGeneratedKeys = true, keyProperty = "tagId")
     int batchInsertBlogTag(@Param("list") List<BlogTag> tagList);
 
-    class BlogTagSqlBuilder {
+    class BlogTagSqlBuilder extends SQL {
+
+        private static final String TABLE_NAME = "tb_blog_tag";
+
         public String insertSelective(BlogTag blog) {
-            StringBuilder sql = new StringBuilder();
-            StringBuilder sqlValues = new StringBuilder("values (");
-            sql.append("INSERT INTO tb_blog_tag (");
-            if (blog.getTagId() != null) {
-                sql.append("tag_id, ");
-                sqlValues.append("#{tagId,jdbcType=INTEGER},");
-            }
-            if (blog.getTagName() != null) {
-                sql.append("tag_name, ");
-                sqlValues.append("#{tagName,jdbcType=VARCHAR},");
-            }
-            if (blog.getIsDeleted() != null) {
-                sql.append("is_deleted, ");
-                sqlValues.append("#{categoryIcon,jdbcType=VARCHAR},");
-            }
-            if (blog.getCreateTime() != null) {
-                sql.append("create_time) ");
-                sqlValues.append("#{createTime,jdbcType=TIMESTAMP} )");
-            }
-            sql.append(sqlValues);
-            System.out.println("sql语句===" + sql.toString());
-            return sql.toString();
+            String sql = new SQL() {{
+                INSERT_INTO(TABLE_NAME);
+                if (blog.getTagId() != null) {
+                    VALUES("tag_id", "#{tagId,jdbcType=INTEGER}");
+                }
+                if (StringUtils.isNotBlank(blog.getTagName())) {
+                    VALUES("tag_name", "#{tagName,jdbcType=VARCHAR}");
+                }
+                if (blog.getIsDeleted() != null) {
+                    VALUES("is_deleted", "#{is_deleted,jdbcType=TINYINT}");
+                }
+                if (blog.getCreateTime() == null) {
+                    blog.setCreateTime(new Date());
+                }
+                VALUES("create_time", "#{createTime,jdbcType=TIMESTAMP}");
+            }}.toString();
+            System.out.println("sql语句===" + sql);
+            return sql;
         }
 
         public String updateByPrimaryKeySelective(BlogTag blog) {
-            StringBuilder sql = new StringBuilder();
-            sql.append("UPDATE tb_blog_tag SET ");
-            if (blog.getTagName() != null) {
-                sql.append("tag_name = #{tagName,jdbcType=VARCHAR},");
-            }
-            if (blog.getIsDeleted() != null) {
-                sql.append("is_deleted = #{isDeleted,jdbcType=TINYINT},");
-            }
-            if (blog.getCreateTime() != null) {
-                sql.append("create_time = #{createTime,jdbcType=TIMESTAMP} ");
-            }
-            sql.append("WHERE tag_id = #{tagId,jdbcType=INTEGER}");
-            System.out.println("sql语句===" + sql.toString());
-            return sql.toString();
+            String sql = new SQL() {{
+                UPDATE(TABLE_NAME);
+                if (StringUtils.isNotBlank(blog.getTagName())) {
+                    SET("tag_name = #{tagName,jdbcType=VARCHAR}");
+                }
+                if (blog.getIsDeleted() != null) {
+                    SET("is_deleted = #{isDeleted,jdbcType=TINYINT}");
+                }
+                WHERE("tag_id = #{tagId,jdbcType=INTEGER}");
+            }}.toString();
+            System.out.println("sql语句===" + sql);
+            return sql;
         }
 
         public String findTagList(final PageQueryUtil pageUtil) {

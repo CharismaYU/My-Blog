@@ -11,8 +11,10 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.SelectProvider;
 import org.apache.ibatis.annotations.Update;
 import org.apache.ibatis.annotations.UpdateProvider;
+import org.apache.ibatis.jdbc.SQL;
 import org.springframework.stereotype.Component;
 
+import java.util.Date;
 import java.util.List;
 
 @Component
@@ -61,61 +63,57 @@ public interface BlogCategoryMapper {
     @UpdateProvider(type = BlogCategorySqlBuilder.class, method = "deleteBatch")
     int deleteBatch(Integer[] ids);
 
-    class BlogCategorySqlBuilder {
+    class BlogCategorySqlBuilder extends SQL {
+
+        private static final String TABLE_NAME = "tb_blog_category";
+
         public String insertSelective(BlogCategory blog) {
-            StringBuilder sql = new StringBuilder();
-            StringBuilder sqlValues = new StringBuilder("values (");
-            sql.append("insert into tb_blog_category (");
-            if (blog.getCategoryId() != null) {
-                sql.append("category_id, ");
-                sqlValues.append("#{categoryId,jdbcType=INTEGER},");
-            }
-            if (blog.getCategoryName() != null) {
-                sql.append("category_name, ");
-                sqlValues.append("#{categoryName,jdbcType=VARCHAR},");
-            }
-            if (blog.getCategoryIcon() != null) {
-                sql.append("category_icon, ");
-                sqlValues.append("#{categoryIcon,jdbcType=VARCHAR},");
-            }
-            if (blog.getCategoryRank() != null) {
-                sql.append("category_rank, ");
-                sqlValues.append("#{categoryRank,jdbcType=INTEGER},");
-            }
-            if (blog.getIsDeleted() != null) {
-                sql.append("is_deleted, ");
-                sqlValues.append("#{isDeleted,jdbcType=TINYINT},");
-            }
-            if (blog.getCreateTime() != null) {
-                sql.append("create_time) ");
-                sqlValues.append("#{createTime,jdbcType=TIMESTAMP} )");
-            }
-            sql.append(sqlValues);
-            System.out.println("sql语句===" + sql.toString());
-            return sql.toString();
+            String sql = new SQL() {{
+                INSERT_INTO(TABLE_NAME);
+                if (blog.getCategoryId() != null) {
+                    VALUES("category_id", "#{categoryId,jdbcType=INTEGER}");
+                }
+                if (StringUtils.isNotBlank(blog.getCategoryName())) {
+                    VALUES("category_name", "#{categoryName,jdbcType=VARCHAR}");
+                }
+                if (StringUtils.isNotBlank(blog.getCategoryIcon())) {
+                    VALUES("category_icon", "#{categoryIcon,jdbcType=VARCHAR}");
+                }
+                if (blog.getCategoryRank() != null) {
+                    VALUES("category_rank", "#{categoryRank,jdbcType=INTEGER}");
+                }
+                if (blog.getIsDeleted() != null) {
+                    VALUES("is_deleted", "#{isDeleted,jdbcType=TINYINT}");
+                }
+                if (blog.getCreateTime() == null) {
+                    blog.setCreateTime(new Date());
+                }
+                VALUES("create_time", "#{createTime,jdbcType=TIMESTAMP}");
+            }}.toString();
+            System.out.println("sql语句===" + sql);
+            return sql;
         }
 
         public String updateByPrimaryKeySelective(BlogCategory blog) {
-            StringBuilder sql = new StringBuilder();
-            sql.append("UPDATE tb_blog_category SET ");
-            if (blog.getCategoryName() != null) {
-                sql.append("category_name = #{categoryName,jdbcType=VARCHAR},");
-            }
-            if (blog.getCategoryIcon() != null) {
-                sql.append("category_icon = #{categoryIcon,jdbcType=VARCHAR},");
-            }
-            if (blog.getCategoryRank() != null) {
-                sql.append("category_rank = #{categoryRank,jdbcType=INTEGER},");
-            }
-            if (blog.getIsDeleted() != null) {
-                sql.append("is_deleted = #{isDeleted,jdbcType=TINYINT},");
-            }
-            if (blog.getCreateTime() != null) {
-                sql.append("create_time = #{createTime,jdbcType=TIMESTAMP} ");
-            }
-            sql.append("WHERE category_id = #{categoryId,jdbcType=INTEGER}");
-            System.out.println("sql语句===" + sql.toString());
-            return sql.toString();
+
+            String sql = new SQL() {{
+                UPDATE(TABLE_NAME);
+                if (StringUtils.isNotBlank(blog.getCategoryName())) {
+                    SET("category_name = #{categoryName,jdbcType=VARCHAR}");
+                }
+                if (StringUtils.isNotBlank(blog.getCategoryIcon())) {
+                    SET("category_icon = #{categoryIcon,jdbcType=VARCHAR}");
+                }
+                if (blog.getCategoryRank() != null) {
+                    SET("category_rank = #{categoryRank,jdbcType=INTEGER}");
+                }
+                if (blog.getIsDeleted() != null) {
+                    SET("is_deleted = #{isDeleted,jdbcType=TINYINT}");
+                }
+                WHERE("category_id = #{categoryId,jdbcType=INTEGER}");
+            }}.toString();
+            System.out.println("sql语句===" + sql);
+            return sql;
         }
 
         public String findCategoryList(final PageQueryUtil pageUtil) {
