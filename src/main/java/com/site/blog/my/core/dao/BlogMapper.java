@@ -95,7 +95,7 @@ public interface BlogMapper {
     @DeleteProvider(type = BlogSqlProvider.class, method = "deleteBatch")
     int deleteBatch(Integer[] ids);
 
-
+    @SelectProvider(type = BlogSqlProvider.class, method = "getBlogsPageByTagId")
     List<Blog> getBlogsPageByTagId(PageQueryUtil pageUtil);
 
     @Select("SELECT COUNT(*) FROM tb_blog WHERE  blog_id IN (SELECT blog_id FROM tb_blog_tag_relation WHERE tag_id = #{tagId}) AND blog_status =1 AND is_deleted=0")
